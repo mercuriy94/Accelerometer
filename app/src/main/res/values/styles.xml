@@ -22,4 +22,6 @@
     <style name="ActMainTextView.White" parent="ActMainTextView">
         <item name="android:textColor">@color/colorWhite</item>
     </style>
+
+
 </resources>

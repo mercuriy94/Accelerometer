@@ -22,9 +22,9 @@
             style="@style/ActMainTextView.White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Координаты"
+            android:layout_marginBottom="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"/>
+            android:text="@string/coordinats"/>
 
         <View
             android:layout_width="match_parent"
@@ -34,9 +34,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginBottom="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp">
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/ActMainTextView.White"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="X"/>
+                android:text="@string/coordinate_x"/>
 
             <TextView
                 style="@style/ActMainTextView.White"
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Y"/>
+                android:text="@string/coordinate_y"/>
 
             <TextView
                 style="@style/ActMainTextView.White"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Z"/>
+                android:text="@string/coordinate_z"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -93,23 +93,21 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:clickable="true"
-                android:enabled="true"
-                android:text="Начать"/>
+                android:text="@string/start"/>
 
             <Button
                 android:id="@+id/act_main_btn_pause"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Пауза"/>
+                android:text="@string/pause"/>
 
             <Button
                 android:id="@+id/act_main_btn_clear"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Очистить"/>
+                android:text="@string/cleaning"/>
 
         </LinearLayout>
 

@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">KatyaMAcc</string>
+
+    <!--Dialogs-->
+    <string name="dialog_btn_ok">Ок</string>
+    <string name="dialog_btn_no">Нет</string>
+    <string name="dialog_btn_cancel">Отмена</string>
+    <string name="error">Ошибка</string>
+    <string name="dialog_message_acc_not_dound_and_close_app">К сожалению сенсор акселемрометр не найден. Выйти из приложения?</string>
+    <string name="start">Начать</string>
+    <string name="pause">Пауза</string>
+    <string name="cleaning">Очистить</string>
+    <string name="coordinate_x">x</string>
+    <string name="coordinate_y">y</string>
+    <string name="coordinate_z">z</string>
+    <string name="coordinats">Координаты</string>
+
 </resources>

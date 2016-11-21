@@ -147,10 +147,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void showDialogNotFoundAccelerometer() {
         new AlertDialog.Builder(this)
-                .setTitle("Ошибка")
-                .setMessage("К сожалению сенсор акселемрометр не найден. Выйти из приложения?")
-                .setPositiveButton("Да", mDialogListenerNotFoundAccelerometr)
-                .setNegativeButton("Нет", mDialogListenerNotFoundAccelerometr)
+                .setTitle(getString(R.string.error))
+                .setMessage(getString(R.string.dialog_message_acc_not_dound_and_close_app))
+                .setPositiveButton(getString(R.string.dialog_btn_ok), mDialogListenerNotFoundAccelerometr)
+                .setNegativeButton(getString(R.string.dialog_btn_no), mDialogListenerNotFoundAccelerometr)
                 .create().show();
     }
 
