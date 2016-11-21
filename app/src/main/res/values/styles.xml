@@ -24,4 +24,16 @@
     </style>
 
 
+    <style name="AppFABTheme">
+        <item name="android:layout_height">@dimen/height_fab_normal</item>
+        <item name="android:layout_width">@dimen/width_fab_normal</item>
+    </style>
+
+    <style name="AppFABTheme.Normal" parent="AppFABTheme"/>
+
+    <style name="AppFABTheme.Mini">
+        <item name="android:layout_height">@dimen/height_fab_mini</item>
+        <item name="android:layout_width">@dimen/width_fab_mini</item>
+
+    </style>
 </resources>

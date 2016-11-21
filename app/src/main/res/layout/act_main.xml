@@ -9,7 +9,20 @@
     android:orientation="vertical"
     tools:context="katya.mercuriy94.com.katyamacc.MainActivity">
 
-    <include layout="@layout/layout_toolbar"/>
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                                       xmlns:app="http://schemas.android.com/apk/res-auto"
+                                       android:id="@+id/toolbar"
+                                       android:layout_width="match_parent"
+                                       android:layout_height="?attr/actionBarSize"
+                                       android:background="?attr/colorPrimary"
+                                       android:clickable="true"
+                                       android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                                       android:weightSum="1"
+                                       app:elevation="5dp"
+                                       app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+
+    </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,8 +35,8 @@
             style="@style/ActMainTextView.White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginBottom="@dimen/spacing_smaller"
+            android:layout_marginTop="@dimen/spacing_smaller"
             android:text="@string/coordinats"/>
 
         <View
@@ -34,8 +47,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginBottom="@dimen/spacing_smaller"
+            android:layout_marginTop="@dimen/spacing_smaller"
             android:orientation="horizontal">
 
             <TextView
@@ -67,7 +80,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clickable="true">
 
 
@@ -80,13 +93,35 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"/>
 
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/act_main_fab_start"
+            style="@style/AppFABTheme.Normal"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_start"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/act_main_fab_pause"
+            style="@style/AppFABTheme.Normal"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_pause"
+            android:visibility="gone"/>
+
+
         <LinearLayout
             android:id="@+id/act_main_container_buttons"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:clickable="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/act_main_btn_start"

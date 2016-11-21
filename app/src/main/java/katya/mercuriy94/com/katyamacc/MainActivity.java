@@ -7,12 +7,15 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,19 +23,20 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
+    //const
     public static final String TAG = "MainActivity";
 
+    //views
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.act_main_btn_start)
-    Button mBtnStart;
-    @BindView(R.id.act_main_btn_pause)
-    Button mBtnPause;
-    @BindView(R.id.act_main_btn_clear)
-    Button mBtnClear;
     @BindView(R.id.act_main_recycler_view)
     RecyclerView mRecyclerView;
+    @BindView(R.id.act_main_fab_start)
+    FloatingActionButton mFabPlay;
+    @BindView(R.id.act_main_fab_pause)
+    FloatingActionButton mFabPause;
 
+    //data
     private RecyclerAccelerometrAdapter mRecyclerAccAdapter;
     private SensorManager mSensorManager;
 
@@ -43,9 +47,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         initFields();
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-    }
 
+    }
 
     private void initFields() {
         initRecyclerView();
@@ -57,25 +60,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mRecyclerView.setLayoutManager(linManager);
         mRecyclerAccAdapter = new RecyclerAccelerometrAdapter();
         mRecyclerView.setAdapter(mRecyclerAccAdapter);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
     }
 
 
     /**
      * Регистрация слушателя на изменения показаний датчика.
      *
-     * @param sensorManager объекь для управления сенсорами
+     * @param sensorManager объект для управления сенсором
      * @throws NullPointerException с случае если sensorManaget = {@code null}
      */
-    private void registerListenerSensorAccelerometr(SensorManager sensorManager) throws NullPointerException {
+    private boolean registerListenerSensorAccelerometr(SensorManager sensorManager) throws NullPointerException {
         if (sensorManager == null) {
             throw new NullPointerException(getLocalClassName() + "sensorManager = null");
         }
 
+        boolean result = false;
         Sensor sensorAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (sensorAccelerometer == null) showDialogNotFoundAccelerometer();
         else {
-            sensorManager.registerListener(this, sensorAccelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+            result = sensorManager.registerListener(this, sensorAccelerometer, SensorManager.SENSOR_DELAY_FASTEST);
         }
+        return result;
     }
 
     private void unregisterListenerSensorAccelerometr(SensorManager sensorManager) {
@@ -86,30 +92,78 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
-    @OnClick(R.id.act_main_btn_start)
-    public void onClickStart() {
-        Log.d(TAG, "onClickStart");
-        registerListenerSensorAccelerometr(mSensorManager);
+    public SensorManager getSensorManager() {
+        if (mSensorManager == null) {
+            mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        }
+        return mSensorManager;
     }
 
 
-    @OnClick(R.id.act_main_btn_pause)
+    @OnClick(R.id.act_main_fab_start)
+    public void onClickPlay() {
+        boolean resultRgistration = registerListenerSensorAccelerometr(getSensorManager());
+        if (resultRgistration) setFabsVisibilityForPlaying();
+    }
+
+    @OnClick(R.id.act_main_fab_pause)
     public void onClickPause() {
-        Log.d(TAG, "onClickPause");
-        unregisterListenerSensorAccelerometr(mSensorManager);
+        unregisterListenerSensorAccelerometr(getSensorManager());
+        setFabsVeibilityForStoping();
     }
 
-    @OnClick(R.id.act_main_btn_clear)
-    public void onClickClear() {
-        Log.d(TAG, "onClickClear");
-        mRecyclerAccAdapter.cleanningList();
+    private void setFabsVisibilityForPlaying() {
+        mFabPlay.setVisibility(View.GONE);
+        mFabPause.setVisibility(View.VISIBLE);
     }
+
+    private void setFabsVeibilityForStoping() {
+        mFabPlay.setVisibility(View.VISIBLE);
+        mFabPause.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_cleaning) {
+            Log.d(TAG, "onClickClear");
+            mRecyclerAccAdapter.cleanningList();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    //реализация слушателя прокрутки RecyclerView
+    RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+        }
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+    };
+
 
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterListenerSensorAccelerometr(mSensorManager);
+        unregisterListenerSensorAccelerometr(getSensorManager());
     }
 
 
