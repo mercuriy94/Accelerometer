@@ -9,20 +9,7 @@
     android:orientation="vertical"
     tools:context="katya.mercuriy94.com.katyamacc.MainActivity">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                                       xmlns:app="http://schemas.android.com/apk/res-auto"
-                                       android:id="@+id/toolbar"
-                                       android:layout_width="match_parent"
-                                       android:layout_height="?attr/actionBarSize"
-                                       android:background="?attr/colorPrimary"
-                                       android:clickable="true"
-                                       android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                                       android:weightSum="1"
-                                       app:elevation="5dp"
-                                       app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-
-    </android.support.v7.widget.Toolbar>
+    <include layout="@layout/layout_toolbar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -88,20 +75,9 @@
             android:id="@+id/act_main_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/act_main_container_buttons"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"/>
 
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/act_main_fab_start"
-            style="@style/AppFABTheme.Normal"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_start"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/act_main_fab_pause"
@@ -113,40 +89,19 @@
             android:src="@drawable/ic_pause"
             android:visibility="gone"/>
 
-
-        <LinearLayout
-            android:id="@+id/act_main_container_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/act_main_fab_start"
+            style="@style/AppFABTheme.Normal"
             android:layout_alignParentBottom="true"
-            android:clickable="true"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/act_main_btn_start"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/start"/>
-
-            <Button
-                android:id="@+id/act_main_btn_pause"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/pause"/>
-
-            <Button
-                android:id="@+id/act_main_btn_clear"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/cleaning"/>
-
-        </LinearLayout>
-
-
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_start"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/shadow"
+            android:visibility="visible"/>
     </RelativeLayout>
 
 

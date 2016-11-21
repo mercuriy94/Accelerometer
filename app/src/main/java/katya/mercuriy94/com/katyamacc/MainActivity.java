@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +42,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private RecyclerAccelerometrAdapter mRecyclerAccAdapter;
     private SensorManager mSensorManager;
 
+    //anims
+    private Animation mAnimZoom;
+    private Animation mAnimZoomOut;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +53,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         initFields();
-
+        initAnims();
     }
+
 
     private void initFields() {
         initRecyclerView();
+    }
+
+    private void initAnims() {
+        mAnimZoom = AnimationUtils.loadAnimation(this, R.anim.zoom);
+        mAnimZoomOut = AnimationUtils.loadAnimation(this, R.anim.zoom_out);
     }
 
     private void initRecyclerView() {
@@ -60,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mRecyclerView.setLayoutManager(linManager);
         mRecyclerAccAdapter = new RecyclerAccelerometrAdapter();
         mRecyclerView.setAdapter(mRecyclerAccAdapter);
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
     }
 
 
@@ -84,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return result;
     }
 
+
     private void unregisterListenerSensorAccelerometr(SensorManager sensorManager) {
         if (sensorManager == null) {
             throw new NullPointerException(getLocalClassName() + "sensorManager = null");
@@ -103,23 +115,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @OnClick(R.id.act_main_fab_start)
     public void onClickPlay() {
         boolean resultRgistration = registerListenerSensorAccelerometr(getSensorManager());
-        if (resultRgistration) setFabsVisibilityForPlaying();
+        if (resultRgistration) {
+            mAnimZoomOut.setAnimationListener(mAnimationListenerForRegisterSensorListener);
+            mFabPlay.startAnimation(mAnimZoomOut);
+        }
     }
 
     @OnClick(R.id.act_main_fab_pause)
     public void onClickPause() {
         unregisterListenerSensorAccelerometr(getSensorManager());
-        setFabsVeibilityForStoping();
+        mAnimZoomOut.setAnimationListener(mAnimationListenerForUnegisterSensorListener);
+        mFabPause.startAnimation(mAnimZoomOut);
     }
 
     private void setFabsVisibilityForPlaying() {
         mFabPlay.setVisibility(View.GONE);
         mFabPause.setVisibility(View.VISIBLE);
+        mFabPlay.setClickable(false);
+        mFabPause.setClickable(true);
     }
 
     private void setFabsVeibilityForStoping() {
-        mFabPlay.setVisibility(View.VISIBLE);
         mFabPause.setVisibility(View.GONE);
+        mFabPlay.setVisibility(View.VISIBLE);
+        mFabPlay.setClickable(true);
+        mFabPause.setClickable(false);
     }
 
     @Override
@@ -133,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_cleaning) {
             Log.d(TAG, "onClickClear");
             mRecyclerAccAdapter.cleanningList();
@@ -144,21 +163,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
-    //реализация слушателя прокрутки RecyclerView
-    RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-        }
-
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-        }
-    };
-
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setFabsVeibilityForStoping();
+        mFabPlay.startAnimation(mAnimZoom);
+    }
 
     @Override
     protected void onPause() {
@@ -225,5 +235,50 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void closeApp() {
         finish();
     }
+
+
+    private Animation.AnimationListener mAnimationListenerForRegisterSensorListener
+            = new Animation.AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+
+            mAnimZoomOut.setAnimationListener(null);
+            mAnimZoom.setAnimationListener(null);
+            mFabPause.startAnimation(mAnimZoom);
+            setFabsVisibilityForPlaying();
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    };
+
+    private Animation.AnimationListener mAnimationListenerForUnegisterSensorListener
+            = new Animation.AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            mAnimZoomOut.setAnimationListener(null);
+            mAnimZoom.setAnimationListener(null);
+            mFabPlay.startAnimation(mAnimZoom);
+            setFabsVeibilityForStoping();
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    };
+
 
 }
