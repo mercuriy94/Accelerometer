@@ -41,10 +41,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     //data
     private RecyclerAccelerometrAdapter mRecyclerAccAdapter;
     private SensorManager mSensorManager;
+    //Флаг указывающий на состояние регистрации слушателя
+    private boolean mRunningListenerAccelerometer;
+    //Вспомогательный флаг для прокрутки списка
+    private boolean mKeyScroll = true;
+
 
     //anims
+    private Animation mAnimationFabRunTop;
+    private Animation mAnimationFabRunBottom;
     private Animation mAnimZoom;
     private Animation mAnimZoomOut;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void initAnims() {
         mAnimZoom = AnimationUtils.loadAnimation(this, R.anim.zoom);
         mAnimZoomOut = AnimationUtils.loadAnimation(this, R.anim.zoom_out);
+        mAnimationFabRunTop = AnimationUtils.loadAnimation(this, R.anim.animation_run_top);
+        mAnimationFabRunBottom = AnimationUtils.loadAnimation(this, R.anim.animation_run_bottom);
     }
 
     private void initRecyclerView() {
@@ -72,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mRecyclerView.setLayoutManager(linManager);
         mRecyclerAccAdapter = new RecyclerAccelerometrAdapter();
         mRecyclerView.setAdapter(mRecyclerAccAdapter);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
     }
 
 
@@ -114,18 +125,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @OnClick(R.id.act_main_fab_start)
     public void onClickPlay() {
-        boolean resultRgistration = registerListenerSensorAccelerometr(getSensorManager());
-        if (resultRgistration) {
-            mAnimZoomOut.setAnimationListener(mAnimationListenerForRegisterSensorListener);
-            mFabPlay.startAnimation(mAnimZoomOut);
+        //Проверка была ли произведена регистрация слушателя ранее
+        if (!isRunningListenerAccelerometer()) {
+            boolean resultRgistration = registerListenerSensorAccelerometr(getSensorManager());
+            if (resultRgistration) {
+                setRunningListenerAccelerometer(true);
+                mAnimZoomOut.setAnimationListener(mAnimationListenerForRegisterSensorListener);
+                mFabPlay.startAnimation(mAnimZoomOut);
+            }
         }
     }
 
     @OnClick(R.id.act_main_fab_pause)
     public void onClickPause() {
-        unregisterListenerSensorAccelerometr(getSensorManager());
-        mAnimZoomOut.setAnimationListener(mAnimationListenerForUnegisterSensorListener);
-        mFabPause.startAnimation(mAnimZoomOut);
+        //Проверка была ли полизведена регистрация слушателя
+        if (isRunningListenerAccelerometer()) {
+            unregisterListenerSensorAccelerometr(getSensorManager());
+            setRunningListenerAccelerometer(false);
+            mAnimZoomOut.setAnimationListener(mAnimationListenerForUnegisterSensorListener);
+            mFabPause.startAnimation(mAnimZoomOut);
+        }
+
     }
 
     private void setFabsVisibilityForPlaying() {
@@ -144,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
@@ -174,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onPause() {
         super.onPause();
         unregisterListenerSensorAccelerometr(getSensorManager());
+        setRunningListenerAccelerometer(false);
     }
 
 
@@ -237,16 +257,52 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
+    public boolean isRunningListenerAccelerometer() {
+        return mRunningListenerAccelerometer;
+    }
+
+    public void setRunningListenerAccelerometer(boolean runningListenerAccelerometer) {
+        mRunningListenerAccelerometer = runningListenerAccelerometer;
+    }
+
+
+    //реализация слушателя прокрутки RecyclerView
+    RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            Log.d(TAG, "dy = " + dy);
+            if (!isRunningListenerAccelerometer()) {
+                //обрабатываем скролл, в зависимости от направления скрола по оси y(ординат), зависит реализация анимации
+                if (dy > 0 && mKeyScroll) {
+                    //выполняется когда скрол происходит при движении пальца снизу вверх
+                    mKeyScroll = false;
+                    if (mFabPause.getVisibility() == View.VISIBLE) {
+                        mFabPause.startAnimation(mAnimationFabRunTop);
+                    }
+                } else if (dy < 0 && !mKeyScroll) {
+                    //выполняется когда скрол происходит при движении пальца сверху вниз
+                    mKeyScroll = true;
+                    if (mFabPause.getVisibility() == View.GONE) {
+                        mFabPause.startAnimation(mAnimationFabRunBottom);
+                    }
+                }
+            }
+        }
+    };
+
+
+//Animation listeners===============================================================================
+
+
     private Animation.AnimationListener mAnimationListenerForRegisterSensorListener
             = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
-
         }
 
         @Override
         public void onAnimationEnd(Animation animation) {
-
             mAnimZoomOut.setAnimationListener(null);
             mAnimZoom.setAnimationListener(null);
             mFabPause.startAnimation(mAnimZoom);
@@ -255,15 +311,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         @Override
         public void onAnimationRepeat(Animation animation) {
-
         }
     };
+
 
     private Animation.AnimationListener mAnimationListenerForUnegisterSensorListener
             = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
-
         }
 
         @Override
@@ -279,6 +334,5 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         }
     };
-
 
 }
