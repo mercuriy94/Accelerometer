@@ -1,4 +1,4 @@
-package katya.mercuriy94.com.katyamacc;
+package katya.mercuriy94.com.katyamacc.presentation.module.main.submodule.accelerometer.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +11,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import katya.mercuriy94.com.katyamacc.R;
+import katya.mercuriy94.com.katyamacc.data.entity.AccelerometerSensor;
 
 
 public class RecyclerAccelerometrAdapter extends RecyclerView.Adapter<RecyclerAccelerometrAdapter.ViewHolder> {
@@ -26,11 +28,24 @@ public class RecyclerAccelerometrAdapter extends RecyclerView.Adapter<RecyclerAc
         mAccelerometerSensorList = accelerometerSensorList;
     }
 
+    public List<AccelerometerSensor> getList() {
+        return mAccelerometerSensorList;
+    }
+
     public void inserItemAndNotify(AccelerometerSensor accelerometerSensor) {
         if (mAccelerometerSensorList == null) mAccelerometerSensorList = new ArrayList<>();
         mAccelerometerSensorList.add(accelerometerSensor);
         notifyItemInserted(mAccelerometerSensorList.indexOf(accelerometerSensor));
+    }
 
+    public void inserItemsAndNotify(List<AccelerometerSensor> sensors) {
+        int quantityNewMessages = sensors.size();
+        mAccelerometerSensorList.addAll(sensors);
+        if (mAccelerometerSensorList.size() == 0) {
+            notifyDataSetChanged();
+        } else {
+            notifyItemRangeInserted(sensors.size() - quantityNewMessages, quantityNewMessages);
+        }
     }
 
     public void cleanningList() {
@@ -47,13 +62,10 @@ public class RecyclerAccelerometrAdapter extends RecyclerView.Adapter<RecyclerAc
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
         AccelerometerSensor accelerometerSensor = mAccelerometerSensorList.get(position);
         holder.mTvX.setText(String.valueOf(accelerometerSensor.getX()));
         holder.mTvY.setText(String.valueOf(accelerometerSensor.getY()));
-        holder.mTvZ
-                .setText(String.valueOf(accelerometerSensor.getZ()));
-
+        holder.mTvZ.setText(String.valueOf(accelerometerSensor.getZ()));
     }
 
     @Override

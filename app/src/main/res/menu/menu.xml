@@ -6,9 +6,16 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/action_cleaning"
+        android:icon="@drawable/ic_broom_white_36dp"
         android:orderInCategory="100"
         android:title="@string/cleaning"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_broom_white_36dp"/>
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_save"
+        android:orderInCategory="100"
+        android:title="@string/save"
+        app:showAsAction="always"/>
 
 </menu>

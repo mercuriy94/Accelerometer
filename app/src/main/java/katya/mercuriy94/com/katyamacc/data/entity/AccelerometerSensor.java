@@ -1,4 +1,4 @@
-package katya.mercuriy94.com.katyamacc;
+package katya.mercuriy94.com.katyamacc.data.entity;
 
 /**
  * Created by nikita on 20.11.2016.

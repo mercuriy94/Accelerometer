@@ -78,19 +78,8 @@
             android:layout_alignParentTop="true"/>
 
 
-
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/act_main_fab_pause"
-            style="@style/AppFABTheme.Normal"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_pause"
-            android:visibility="gone"/>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/act_main_fab_start"
+            android:id="@+id/act_main_fab_start_pause"
             style="@style/AppFABTheme.Normal"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"

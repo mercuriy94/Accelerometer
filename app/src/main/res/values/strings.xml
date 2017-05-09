@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Accelerometr</string>
+    <string name="app_name">Accelerometer</string>
 
     <!--Dialogs-->
     <string name="dialog_btn_ok">Ок</string>
@@ -10,11 +10,15 @@
     <string name="start">Начать</string>
     <string name="pause">Пауза</string>
     <string name="cleaning">Очистить</string>
+    <string name="save">Сохранить</string>
     <string name="coordinate_x">x</string>
     <string name="coordinate_y">y</string>
     <string name="coordinate_z">z</string>
     <string name="coordinats">Координаты</string>
-
+    <string name="dlg_msg_save_results">Результаты сохраняются, пожалуйста подождите…</string>
+    <string name="dlg_msg_save_results_error">Что-то пошло не так :(</string>
+    <string name="dlg_msg_save_results_success">Результаты успешно сохранены!</string>
+    <string name="dlg_msg_save_results_empty_data">Нет результатов для записи!</string>
 
 
 </resources>
