@@ -23,7 +23,8 @@ public class MainPresenter extends MainModuleContract.AbstractMainPresenter {
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        getRouter().navigateToAccelerometerScreen();
+        //getRouter().navigateToAccelerometerScreen();
+        getRouter().navigateToGraphScreen();
     }
 
     @Override

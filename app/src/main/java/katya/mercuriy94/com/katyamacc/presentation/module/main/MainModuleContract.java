@@ -43,6 +43,8 @@ public class MainModuleContract {
             super(routeConductor);
         }
 
+        public abstract void navigateToGraphScreen();
+
         public abstract void navigateToAccelerometerScreen();
 
         public abstract void showNotFoundAccDialog();

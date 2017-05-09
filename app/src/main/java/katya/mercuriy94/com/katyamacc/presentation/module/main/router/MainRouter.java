@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import katya.mercuriy94.com.katyamacc.presentation.common.router.ActivityRouterAdapter;
 import katya.mercuriy94.com.katyamacc.presentation.module.main.MainModuleContract;
 import katya.mercuriy94.com.katyamacc.presentation.module.main.submodule.accelerometer.view.AccelerometerFragmentView;
+import katya.mercuriy94.com.katyamacc.presentation.module.main.submodule.graphs.view.GraphFragmentView;
 import katya.mercuriy94.com.katyamacc.presentation.module.main.submodule.notfoundaccdialog.view.NotFoundAccDialogView;
 
 /**
@@ -22,6 +23,15 @@ public class MainRouter extends MainModuleContract.AbstractMainRouter {
             navigateToFragment(AccelerometerFragmentView.newInstance(),
                     getRouteAdapter().getContainerForFragmentsId(),
                     AccelerometerFragmentView.TAG);
+        }
+    }
+
+    @Override
+    public void navigateToGraphScreen() {
+        if (getRouteAdapter() != null) {
+            navigateToFragment(GraphFragmentView.newInstance(),
+                    getRouteAdapter().getContainerForFragmentsId(),
+                    GraphFragmentView.TAG);
         }
     }
 

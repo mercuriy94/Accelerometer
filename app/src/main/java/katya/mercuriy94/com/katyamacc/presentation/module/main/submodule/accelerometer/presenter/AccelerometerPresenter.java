@@ -112,7 +112,7 @@ public class AccelerometerPresenter extends AccelerometerModuleContract.Abstract
     public void detachView(AccelerometerModuleContract.IAccelerometerView view) {
         super.detachView(view);
         view.clear(false);
-        // view.pause(false);
+        // GraphModuleContract.pause(false);
     }
 
 
