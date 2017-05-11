@@ -59,6 +59,8 @@ public abstract class AccelerometerModuleContract {
 
         public abstract void onClickBtnPlayPause();
 
+        public abstract void onClickBtnGraph();
+
         public abstract void onClickBtnRemoveResults();
 
         public abstract void onClickBtnSave();

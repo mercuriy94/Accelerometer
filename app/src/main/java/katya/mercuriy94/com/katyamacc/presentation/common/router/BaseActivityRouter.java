@@ -11,6 +11,7 @@ import java.util.Queue;
 import katya.mercuriy94.com.katyamacc.presentation.common.router.fragmenttransaction.AddFragmentTransaction;
 import katya.mercuriy94.com.katyamacc.presentation.common.router.fragmenttransaction.FragmentTransaction;
 import katya.mercuriy94.com.katyamacc.presentation.common.router.fragmenttransaction.RemoveFragmentTransaction;
+import katya.mercuriy94.com.katyamacc.presentation.common.router.fragmenttransaction.ReplaceFragmentTransaction;
 import katya.mercuriy94.com.katyamacc.presentation.common.router.fragmenttransaction.ShowDialogTransaction;
 import katya.mercuriy94.com.katyamacc.presentation.common.router.fragmenttransaction.TransactionRemoveFragmentByTag;
 import katya.mercuriy94.com.katyamacc.presentation.common.view.BaseDialogFragment;
@@ -57,6 +58,10 @@ public abstract class BaseActivityRouter implements IOnActivityLifecycleListener
 
     protected void navigateToFragment(@NonNull BaseFragment fragment, int container, String tag) {
         executeTransaction(new AddFragmentTransaction(fragment, container, tag));
+    }
+
+    protected void replaceFragment(@NonNull BaseFragment fragment, int container, String tag ){
+        executeTransaction(new ReplaceFragmentTransaction(fragment, container, tag));
     }
 
     protected void showDialogFragment(@NonNull BaseDialogFragment baseDialogFragment) {

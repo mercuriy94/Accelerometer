@@ -33,6 +33,8 @@
     <dimen name="spacing_smallest_xx">1dp</dimen>
 
 
+    <dimen name="width_line">1dp</dimen>
+
     <dimen name="height_fab_normal">56dp</dimen>
     <dimen name="height_fab_mini">40dp</dimen>
     <dimen name="width_fab_normal">56dp</dimen>

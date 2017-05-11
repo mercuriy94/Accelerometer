@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.arellomobile.mvp.InjectViewState;
 
-import katya.mercuriy94.com.katyamacc.R;
 import katya.mercuriy94.com.katyamacc.presentation.common.di.presenterbindings.HasPresenterSubcomponentBuilders;
 import katya.mercuriy94.com.katyamacc.presentation.model.TitleModel;
 import katya.mercuriy94.com.katyamacc.presentation.module.main.MainModuleContract;
@@ -23,14 +22,12 @@ public class MainPresenter extends MainModuleContract.AbstractMainPresenter {
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        //getRouter().navigateToAccelerometerScreen();
-        getRouter().navigateToGraphScreen();
+        getRouter().navigateToAccelerometerScreen();
+        //getRouter().navigateToGraphScreen();
     }
 
     @Override
     protected TitleModel getTitle() {
-        return new TitleModel.Builder()
-                .setTitleMessageRes(R.string.app_name)
-                .build();
+        return null;
     }
 }

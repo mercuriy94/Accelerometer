@@ -25,6 +25,7 @@ public abstract class BaseInteractor<Result, Param> {
     protected Scheduler mObserverScheduler;
     private CompositeDisposable mCompositeDisposable;
 
+    private Observable<Result> mResultObservable;
 
     private BaseInteractor() {
     }
@@ -38,6 +39,16 @@ public abstract class BaseInteractor<Result, Param> {
         mCompositeDisposable = new CompositeDisposable();
     }
 
+    public Disposable subscribe(DisposableObserver<Result> disposableObserver, Param param) {
+        Preconditions.checkNotNull(disposableObserver);
+        if (!isRun()) mResultObservable = buildObservable(param).compose(applySchedulers());
+        Disposable disposable = mResultObservable.subscribeWith(disposableObserver);
+        addDisposable(disposable);
+        return disposable;
+    }
+
+
+    @Deprecated
     public void execute(DisposableObserver<Result> disposableObserver, Param param) {
         Preconditions.checkNotNull(disposableObserver);
         final Observable<Result> observable = buildObservable(param)
@@ -48,13 +59,32 @@ public abstract class BaseInteractor<Result, Param> {
     protected abstract Observable<Result> buildObservable(Param param);
 
     public void dispose() {
-        if (mCompositeDisposable.isDisposed()) mCompositeDisposable.dispose();
+        if (!mCompositeDisposable.isDisposed()) mCompositeDisposable.dispose();
     }
+
+    public boolean dispose(Disposable disposable) {
+        return isRun() && mCompositeDisposable.remove(disposable);
+    }
+
+    private CompositeDisposable getCompositeDisposable() {
+        if (isDisposed()) {
+            mCompositeDisposable = new CompositeDisposable();
+        }
+        return mCompositeDisposable;
+    }
+
+    public boolean isRun() {
+        return !isDisposed() && mCompositeDisposable.size() > 0;
+    }
+
+    private boolean isDisposed() {
+        return mCompositeDisposable == null || mCompositeDisposable.isDisposed();
+    }
+
 
     protected void addDisposable(Disposable disposable) {
         Preconditions.checkNotNull(disposable);
-        Preconditions.checkNotNull(mCompositeDisposable);
-        mCompositeDisposable.add(disposable);
+        getCompositeDisposable().add(disposable);
     }
 
     protected <T> ObservableTransformer<T, T> applySchedulers() {

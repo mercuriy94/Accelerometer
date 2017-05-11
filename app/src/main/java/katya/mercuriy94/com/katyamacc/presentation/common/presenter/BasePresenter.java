@@ -46,7 +46,9 @@ public abstract class BasePresenter<View extends IBaseView, Router extends BaseA
     @Override
     public void attachView(View view) {
         super.attachView(view);
+        updateTitle();
         view.setInitialState();
+
 
     }
 

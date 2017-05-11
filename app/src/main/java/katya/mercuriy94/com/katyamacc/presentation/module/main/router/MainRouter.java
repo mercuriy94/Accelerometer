@@ -29,7 +29,7 @@ public class MainRouter extends MainModuleContract.AbstractMainRouter {
     @Override
     public void navigateToGraphScreen() {
         if (getRouteAdapter() != null) {
-            navigateToFragment(GraphFragmentView.newInstance(),
+            replaceFragment(GraphFragmentView.newInstance(),
                     getRouteAdapter().getContainerForFragmentsId(),
                     GraphFragmentView.TAG);
         }

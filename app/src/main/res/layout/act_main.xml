@@ -79,7 +79,7 @@
 
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/act_main_fab_start_pause"
+            android:id="@+id/frg_acc_fab_start_pause"
             style="@style/AppFABTheme.Normal"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"

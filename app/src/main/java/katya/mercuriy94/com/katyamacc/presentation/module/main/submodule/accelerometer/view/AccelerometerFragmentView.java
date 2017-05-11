@@ -54,8 +54,10 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
 
     @BindView(R.id.act_main_recycler_view)
     RecyclerView mRecyclerView;
-    @BindView(R.id.act_main_fab_start_pause)
+    @BindView(R.id.frg_acc_fab_start_pause)
     FloatingActionButton mFabStartPause;
+    @BindView(R.id.frg_acc_fab_graph)
+    FloatingActionButton mFabGraph;
 
     //Флаг указывающий на состояние регистрации слушателя
     private boolean mRunningListenerAccelerometer;
@@ -66,10 +68,13 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
     private LinearLayoutManager mLayoutManager;
 
     //anims
-    private Animation mAnimationFabRunTop;
-    private Animation mAnimationFabRunBottom;
-    private Animation mAnimZoom;
-    private Animation mAnimZoomOut;
+    private Animation mAnimationFabPlayPauseRunTop;
+    private Animation mAnimationFabPlayPauseRunBottom;
+    private Animation mFabPlayPauseAnimZoom;
+    private Animation mFabPlayPauseAnimZoomOut;
+    private Animation mAnimationFabGrapghRunRight;
+    private Animation mAnimationFabGrapghRunRightClick;
+    private Animation mAnimationFabGrapghRunLeft;
 
 
     @ProvidePresenter
@@ -81,19 +86,20 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
         return new AccelerometerFragmentView();
     }
 
+    @SuppressWarnings("WrongConstant")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            mFabStartPause.setVisibility(savedInstanceState.getBoolean(STATE_VISIBILITY_FAB_KEY, true) ?
-                    View.VISIBLE : View.GONE);
+            mFabStartPause.setVisibility(savedInstanceState.getInt(STATE_VISIBILITY_FAB_KEY));
+            mFabGraph.setVisibility(savedInstanceState.getInt(STATE_VISIBILITY_FAB_KEY));
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_VISIBILITY_FAB_KEY, mFabStartPause.getVisibility() == View.VISIBLE);
+        outState.putInt(STATE_VISIBILITY_FAB_KEY, mFabStartPause.getVisibility());
     }
 
     @Override
@@ -123,6 +129,23 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
 
     @Override
     public void setInitialState() {
+        if (mFabStartPause.getVisibility() == View.VISIBLE || mFabStartPause.getVisibility() == View.INVISIBLE) {
+            mFabStartPause.setVisibility(View.VISIBLE);
+            mFabStartPause.clearAnimation();
+            mFabStartPause.startAnimation(mAnimationFabPlayPauseRunTop);
+            mFabGraph.setVisibility(View.VISIBLE);
+            mFabGraph.clearAnimation();
+            mFabGraph.startAnimation(mAnimationFabGrapghRunLeft);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mFabStartPause.getVisibility() == View.VISIBLE) {
+            mFabStartPause.setVisibility(View.INVISIBLE);
+            mFabGraph.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void initRecyclerView() {
@@ -134,16 +157,27 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
     }
 
     private void initAnims() {
-        mAnimZoom = AnimationUtils.loadAnimation(getActivity(), R.anim.zoom);
-        mAnimZoom.setAnimationListener(mAnimationListener);
-        mAnimZoomOut = AnimationUtils.loadAnimation(getActivity(), R.anim.zoom_out);
-        mAnimZoomOut.setAnimationListener(mAnimationListener);
-        mAnimationFabRunTop = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_run_top);
-        mAnimationFabRunTop.setAnimationListener(mAnimationListener);
-        mAnimationFabRunBottom = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_run_bottom);
-        mAnimationFabRunBottom.setAnimationListener(mAnimationListener);
-    }
 
+        //region fab play pause anims
+        mFabPlayPauseAnimZoom = AnimationUtils.loadAnimation(getActivity(), R.anim.zoom);
+        mFabPlayPauseAnimZoom.setAnimationListener(mFabPlayPauseAnimationListener);
+        mFabPlayPauseAnimZoomOut = AnimationUtils.loadAnimation(getActivity(), R.anim.zoom_out);
+        mFabPlayPauseAnimZoomOut.setAnimationListener(mFabPlayPauseAnimationListener);
+        mAnimationFabPlayPauseRunTop = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_run_top);
+        mAnimationFabPlayPauseRunTop.setAnimationListener(mFabPlayPauseAnimationListener);
+        mAnimationFabPlayPauseRunBottom = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_run_bottom);
+        mAnimationFabPlayPauseRunBottom.setAnimationListener(mFabPlayPauseAnimationListener);
+        //endregion fab play pause anims
+
+        //region fab graph anims
+        mAnimationFabGrapghRunLeft = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_run_left);
+        mAnimationFabGrapghRunLeft.setAnimationListener(mFabGraphAnimationListener);
+        mAnimationFabGrapghRunRight = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_run_right);
+        mAnimationFabGrapghRunRight.setAnimationListener(mFabGraphAnimationListener);
+        mAnimationFabGrapghRunRightClick = AnimationUtils.loadAnimation(getActivity(), R.anim.animation_run_right);
+        mAnimationFabGrapghRunRightClick.setAnimationListener(mFabGraphAnimationListener);
+        //endegion fab graph anims
+    }
 
     @Override
     public void showResults(List<AccelerometerSensor> accelerometerSensors, boolean scrollToLastPosition) {
@@ -151,6 +185,9 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
             mRecyclerAccAdapter.inserItemsAndNotify(accelerometerSensors);
             if (scrollToLastPosition) {
                 mRecyclerView.scrollToPosition(mRecyclerAccAdapter.getItemCount());
+                mRunningListenerAccelerometer = true;
+            }else {
+                mRunningListenerAccelerometer = false;
             }
         }
     }
@@ -177,7 +214,9 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
         mRecyclerAccAdapter.cleanningList();
         if (animEnable && mFabStartPause.getVisibility() == View.GONE) {
             mFabStartPause.setVisibility(View.VISIBLE);
-            mFabStartPause.startAnimation(mAnimationFabRunTop);
+            mFabStartPause.startAnimation(mAnimationFabPlayPauseRunTop);
+            mFabGraph.setVisibility(View.VISIBLE);
+            mFabGraph.startAnimation(mAnimationFabGrapghRunLeft);
         }
     }
 
@@ -196,16 +235,16 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
         Sensor sensorAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (sensorAccelerometer == null) mPresenter.notFoundAccelerometerSensor();
         else {
-            if(!mRunningListenerAccelerometer){
+            if (!mRunningListenerAccelerometer) {
                 mPresenter.setRxSensorPublisher(mSensorPublishSubject);
                 result = sensorManager.registerListener(this, sensorAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-            }else result = true;
+            } else result = true;
 
         }
         mRunningListenerAccelerometer = result;
 
         if (mRunningListenerAccelerometer) {
-            if (animEnable) mFabStartPause.startAnimation(mAnimZoomOut);
+            if (animEnable) mFabStartPause.startAnimation(mFabPlayPauseAnimZoomOut);
             else mFabStartPause.setImageResource(R.drawable.ic_pause);
         }
 
@@ -218,10 +257,9 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
         }
         sensorManager.unregisterListener(this);
         mRunningListenerAccelerometer = false;
-        if (animEnable) mFabStartPause.startAnimation(mAnimZoomOut);
-        else mFabStartPause.setImageResource(R.drawable.ic_start);
-
-
+        if (animEnable && mFabStartPause.getVisibility() == View.VISIBLE) {
+            mFabStartPause.startAnimation(mFabPlayPauseAnimZoomOut);
+        } else mFabStartPause.setImageResource(R.drawable.ic_start);
     }
 
 
@@ -253,7 +291,8 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
             case Sensor.TYPE_ACCELEROMETER: {
                 mSensorPublishSubject.onNext(new AccelerometerSensor(event.values[0],
                         event.values[1],
-                        event.values[2]));
+                        event.values[2],
+                        0L));
             }
         }
     }
@@ -279,21 +318,25 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
                         mLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
                     mKeyScroll = true;
                     mFabStartPause.setVisibility(View.VISIBLE);
-                    mFabStartPause.startAnimation(mAnimationFabRunTop);
+                    mFabStartPause.startAnimation(mAnimationFabPlayPauseRunTop);
+                    mFabGraph.setVisibility(View.VISIBLE);
+                    mFabGraph.startAnimation(mAnimationFabGrapghRunLeft);
                 } else if (dy > 0 && mKeyScroll && recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING) {
                     mKeyScroll = false;
-                    mFabStartPause.startAnimation(mAnimationFabRunBottom);
+                    mFabStartPause.startAnimation(mAnimationFabPlayPauseRunBottom);
+                    mFabGraph.startAnimation(mAnimationFabGrapghRunRight);
                 } else if (dy < 0 && !mKeyScroll && recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING) {
                     mKeyScroll = true;
                     mFabStartPause.setVisibility(View.VISIBLE);
-                    mFabStartPause.startAnimation(mAnimationFabRunTop);
-
+                    mFabStartPause.startAnimation(mAnimationFabPlayPauseRunTop);
+                    mFabGraph.setVisibility(View.VISIBLE);
+                    mFabGraph.startAnimation(mAnimationFabGrapghRunLeft);
                 }
             }
 
         }
 
-        @Override
+   /*     @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
@@ -303,15 +346,15 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
             } else if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
                 Log.d(TAG, "SCROLL_STATE_SETTLING");
             }
-        }
+        }*/
     };
 
     //endregion OnScrollListener
 
 
-    //region AnimationsListeners
+    //region FABPlayPauseAnimationsListeners
 
-    private Animation.AnimationListener mAnimationListener
+    private Animation.AnimationListener mFabPlayPauseAnimationListener
             = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
@@ -320,18 +363,17 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
         @Override
         public void onAnimationEnd(Animation animation) {
             mFabStartPause.clearAnimation();
-            if (animation == mAnimZoomOut) {
+            if (animation == mFabPlayPauseAnimZoomOut) {
                 if (isRunningListenerAccelerometer()) {
                     mFabStartPause.setImageResource(R.drawable.ic_pause);
 
                 } else {
                     mFabStartPause.setImageResource(R.drawable.ic_start);
                 }
-                mFabStartPause.startAnimation(mAnimZoom);
-            } else if (animation == mAnimationFabRunBottom) {
+                mFabStartPause.startAnimation(mFabPlayPauseAnimZoom);
+            } else if (animation == mAnimationFabPlayPauseRunBottom) {
                 mFabStartPause.setVisibility(View.GONE);
-
-            } else if (animation == mAnimationFabRunTop) {
+            } else if (animation == mAnimationFabPlayPauseRunTop) {
                 mFabStartPause.setVisibility(View.VISIBLE);
             }
 
@@ -343,7 +385,38 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
         }
     };
 
-    //endregion
+    //endregion FABPlayPauseAnimationsListeners
+
+    //region  FABGraphAnimationsListeners
+
+    private Animation.AnimationListener mFabGraphAnimationListener
+            = new Animation.AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            mFabStartPause.clearAnimation();
+            if (animation == mAnimationFabGrapghRunLeft) {
+                mFabGraph.setVisibility(View.VISIBLE);
+            } else if (animation == mAnimationFabGrapghRunRight) {
+                mFabGraph.setVisibility(View.GONE);
+            } else {
+                mFabGraph.setVisibility(View.INVISIBLE);
+                mFabStartPause.setVisibility(View.INVISIBLE);
+
+                getPresenter().onClickBtnGraph();
+
+            }
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
+    };
+
+    //endregion FABGraphAnimationsListeners
 
     //region methods
 
@@ -353,9 +426,15 @@ public class AccelerometerFragmentView extends AccelerometerModuleContract.Abstr
     }
 
 
-    @OnClick(R.id.act_main_fab_start_pause)
+    @OnClick(R.id.frg_acc_fab_start_pause)
     public void onClickPlayPauseButton() {
         getPresenter().onClickBtnPlayPause();
+    }
+
+    @OnClick(R.id.frg_acc_fab_graph)
+    public void onClickGraphButton() {
+        mFabStartPause.startAnimation(mAnimationFabPlayPauseRunBottom);
+        mFabGraph.startAnimation(mAnimationFabGrapghRunRightClick);
     }
 
     //endregion methods

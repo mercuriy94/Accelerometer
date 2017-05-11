@@ -9,11 +9,16 @@ public class AccelerometerSensor {
     private float mX;
     private float mY;
     private float mZ;
+    private long mTimeStamp;
 
-    public AccelerometerSensor(float x, float y, float z) {
+    public AccelerometerSensor() {
+    }
+
+    public AccelerometerSensor(float x, float y, float z, long timeStamp) {
         mX = x;
         mY = y;
         mZ = z;
+        mTimeStamp = timeStamp;
     }
 
     public float getX() {
@@ -38,5 +43,13 @@ public class AccelerometerSensor {
 
     public void setZ(float z) {
         mZ = z;
+    }
+
+    public long getTimeStamp() {
+        return mTimeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        mTimeStamp = timeStamp;
     }
 }
